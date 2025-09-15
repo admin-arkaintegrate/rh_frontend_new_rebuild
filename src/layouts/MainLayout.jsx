@@ -5,19 +5,15 @@ import Navbar from "../components/common/Navbar";
 
 export default function MainLayout() {
   return (
-    <div className="min-h-screen">
-      <div className="flex background max-md:h-[200vh] h-[50vh] ">
-        <div
-          className={`lg:block bg-white fixed hidden z-10 w-[265px] sideBar rounded-[20px] shadow-md`}
-        >
-          <SideBar />
-        </div>
-        <div
-          className={`flex-1 flex flex-col max-lg:ml-0 h-fitlg:ml-24"
-            transition-margin duration-300`}
-        >
+    <div className="min-h-screen bg-[#354D92] flex ">
+      {/* Sidebar */}
+      <SideBar />
+
+      {/* Centered content */}
+      <div className="flex flex-1 items-center justify-center green">
+        <div className="flex  flex-col h-[96vh] ml-28 mr-3  w-full bg-[#F5F7FA] rounded-2xl shadow">
           <Navbar />
-          <main className="overflow-auto flex-1">
+          <main className="overflow-auto flex-1 p-4 scrollbar-hide">
             <Outlet />
           </main>
         </div>
