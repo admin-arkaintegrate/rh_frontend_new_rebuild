@@ -1,33 +1,58 @@
-/** @type {import('tailwindcss').Config} */
-export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
-  theme: {
-    extend: {
-      keyframes: {
-        spin: {
-          to: { transform: 'rotate(360deg)' },
-        },
-        'spin-reverse': {
-          to: { transform: 'rotate(-360deg)' },
-        },
+import { createBrowserRouter } from "react-router-dom";
+import AuthLayout from "../layouts/AuthLayout";
+import MainLayout from "../layouts/MainLayout";
+import Login from "../pages/login/Login";
+import Dashboard from "../pages/dashboard/Dashboard";
+import Settings from "../pages/settings/Settings";
+import Doctors from "../pages/doctors/Doctors";
+import TelePriv from "../pages/tele-priv/TelePriv";
+import Notfound from "../pages/not-found/Notfound";
+import ProtectedRoute from "./ProtectedRoute";
+import TeleMed from "../pages/tele-med/TeleMed";
+
+const router = createBrowserRouter([
+  {
+    element: <AuthLayout />,
+    children: [
+      {
+        path: "/login",
+        element: <Login />,
       },
-      animation: {
-        'spin-slow': 'spin 2s linear infinite',
-        'spin-slow-reverse': 'spin-reverse 2s linear infinite',
+    ],
+  },
+  {
+    element: (
+      <ProtectedRoute>
+        <MainLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        path: "/",
+        element: <Dashboard />,
       },
-      fontFamily: {
-        montserrat: ['Montserrat', 'sans-serif'],
+      {
+        path: "/tele-med",
+        element: <TeleMed />,
       },
-      colors: {
-        primary: '#0D6EFD'
+      {
+        path: "/tele-priv",
+        element: <TelePriv />,
       },
-      screens: {
-        xs: '475px',
+      {
+        path: "/doctors",
+        element: <Doctors />,
       },
-    },
-    plugins: [],
-  }
-}
+      {
+        path: "/settings",
+        element: <Settings />,
+      },
+    ],
+  },
+  {
+    path: "*",
+    element: <Notfound />,
+  },
+]);
+
+export default router;
