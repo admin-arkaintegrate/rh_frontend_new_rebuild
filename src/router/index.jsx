@@ -22,9 +22,9 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      // <ProtectedRoute>
+      <ProtectedRoute>
         <MainLayout />
-      // </ProtectedRoute>
+      </ProtectedRoute>
     ),
     children: [
       {

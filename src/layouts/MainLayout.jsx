@@ -13,7 +13,7 @@ export default function MainLayout() {
       <div className="flex flex-1 items-center justify-center green">
         <div className="flex  flex-col h-[96vh] ml-28 mr-3  w-full bg-[#F5F7FA] rounded-2xl shadow">
           <Navbar />
-          <main className="overflow-auto flex-1 p-4 scrollbar-hide">
+          <main className="overflow-auto flex-1 p-2 scrollbar-hide">
             <Outlet />
           </main>
         </div>

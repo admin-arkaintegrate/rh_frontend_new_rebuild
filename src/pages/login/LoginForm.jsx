@@ -4,8 +4,8 @@ import * as Yup from "yup";
 import { loginUser } from "../../services/login/loginUser";
 import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import eyeEnabled from "../../../public/assets/icons/eye.svg";
-import eyeDisabled from "../../../public/assets/icons/eye-off.svg";
+import eyeEnabled from "/src/assets/icons/eye.svg";
+import eyeDisabled from "/src/assets/icons/eye-off.svg";
 
 export default function LoginForm({ onFinish }) {
   const { login } = useAuth();
@@ -25,7 +25,7 @@ export default function LoginForm({ onFinish }) {
         .required("Username is required"),
       password: Yup.string()
         .trim("Password cannot be empty")
-        .min(6, "Password must be at least 6 characters")
+        .min(5, "Password must be at least 5 characters")
         .required("Password is required"),
     }),
     onSubmit: async (values, { resetForm }) => {
@@ -122,7 +122,7 @@ export default function LoginForm({ onFinish }) {
 
       <button
         type="submit"
-        className="md:w-1/3 w-full primary text-white py-4 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2"
+        className="md:w-1/3 w-full bg-[var(--primaryDark)] text-white py-4 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2"
         disabled={!formik.isValid || !formik.dirty || buttonLoading}
       >
         {buttonLoading ? (
