@@ -1,14 +1,26 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import logo from "/assets/imgs/logo.png";
+import logo from "/src/assets/imgs/logo.png";
 
 const navItems = [
-  { to: "/", icon: "/assets/icons/dashboard.svg", label: "Dashboard" },
-  { to: "/tele-med", icon: "/assets/icons/tele-med.svg", label: "Tele Med" },
-  { to: "/tele-priv", icon: "/assets/icons/tele-priv.svg", label: "Tele Priv" },
-  { to: "/doctors", icon: "/assets/icons/doctors.svg", label: "Doctors" },
-  { to: "/settings", icon: "/assets/icons/settings.svg", label: "Settings" },
-  { to: "/logout", icon: "/assets/icons/sign-out.svg", label: "Logout" },
+  { to: "/", icon: "/src/assets/icons/dashboard.svg", label: "Dashboard" },
+  {
+    to: "/tele-med",
+    icon: "/src/assets/icons/tele-med.svg",
+    label: "Tele Med",
+  },
+  {
+    to: "/tele-priv",
+    icon: "/src/assets/icons/tele-priv.svg",
+    label: "Tele Priv",
+  },
+  { to: "/doctors", icon: "/src/assets/icons/doctors.svg", label: "Doctors" },
+  {
+    to: "/settings",
+    icon: "/src/assets/icons/settings.svg",
+    label: "Settings",
+  },
+  { to: "/logout", icon: "/src/assets/icons/sign-out.svg", label: "Logout" },
 ];
 
 export default function SideBar() {

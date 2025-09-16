@@ -7,12 +7,16 @@
   --primary: #3972C3;
   --blue: #4079ED;
   --grayColor: #737791;
+  --green:#48BB78
 }
-/* Hide scrollbar but keep scroll */
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
 .scrollbar-hide::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+  display: none; 
 }
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE & Edge */
-  scrollbar-width: none;     /* Firefox */
+  -ms-overflow-style: none; 
+  scrollbar-width: none;    
 }

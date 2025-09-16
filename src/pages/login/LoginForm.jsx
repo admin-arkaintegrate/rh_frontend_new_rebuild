@@ -4,8 +4,8 @@ import * as Yup from "yup";
 import { loginUser } from "../../services/login/loginUser";
 import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import eyeEnabled from "../../../public/assets/icons/eye.svg";
-import eyeDisabled from "../../../public/assets/icons/eye-off.svg";
+import eyeEnabled from "/src/assets/icons/eye.svg";
+import eyeDisabled from "/src/assets/icons/eye-off.svg";
 
 export default function LoginForm({ onFinish }) {
   const { login } = useAuth();
