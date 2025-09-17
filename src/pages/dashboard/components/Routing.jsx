@@ -1,68 +1,113 @@
-import React from "react";
+import React, { useMemo } from "react";
+import Table from "../../../components/shared/Table";
+import edit from "/src/assets/icons/edit.svg";
+import done from "/src/assets/icons/done.svg";
 
-export default function Routing() {
-  const stores = [
-    { name: "Pharmacy name", card: 1229 },
-    { name: "Pharmacy name", card: 1225 },
+export default function Routing({
+  stores = [],
+  doctors = [],
+  loading = { stores: false, doctors: false },
+  error = { stores: "", doctors: "" },
+  patientType = "all",
+}) {
+
+  const getStoreCount = (row) => {
+    const med = Number(row?.med_cap ?? 0);
+    const priv = Number(row?.priv_cap ?? 0);
+    if (patientType === "tele_med") return med;
+    if (patientType === "tele_priv") return priv;
+    return med + priv; // all
+  };
+
+  const storesData = useMemo(
+    () =>
+      (Array.isArray(stores) ? stores : []).map((s, idx) => ({
+        id: s.id ?? idx + 1,
+        name: s.pharmacy ?? "N/A",
+        card: getStoreCount(s),
+        action: getStoreCount(s) > 0 ? "success" : "edit",
+      })),
+    [stores, patientType]
+  );
+
+  const doctorsData = useMemo(
+    () =>
+      (Array.isArray(doctors) ? doctors : []).map((d, idx) => ({
+        id: d.user_id ?? idx + 1,
+        name: d.first_name || d.last_name ? `${d.first_name ?? ""} ${d.last_name ?? ""}`.trim() : d.username ?? "N/A",
+        card: Number(d.doc_cap ?? 0),
+        action: Number(d.doc_cap ?? 0) > 0 ? "success" : "edit",
+      })),
+    [doctors]
+  );
+
+  const renderAction = (type) =>
+    type === "success" ? (
+      <img src={done} className="w-6 h-6 mx-auto" />
+    ) : (
+      <img src={edit} className="w-6 h-6  mx-auto" />
+    );
+
+  const baseCols = (nameHeader) => [
+    {
+      header: "#",
+      accessorKey: "id",
+      size: 60,
+      cell: (info) => info.row.index + 1,
+    },
+    {
+      header: nameHeader,
+      accessorKey: "name",
+      size: 260,
+      cell: (info) => info.getValue(),
+    },
+    {
+      header: "Count",
+      accessorKey: "card",
+      size: 120,
+      cell: (info) => info.getValue(),
+    },
+    {
+      header: "Action",
+      accessorKey: "action",
+      size: 100,
+      cell: (info) => renderAction(info.getValue()),
+    },
   ];
 
-  const doctors = [
-    { name: "Dr name", card: 1229 },
-    { name: "Dr name", card: 1225 },
-  ];
+  const storeColumns = useMemo(() => baseCols("Store name"), []);
+  const doctorColumns = useMemo(() => baseCols("Doctor name"), []);
 
   return (
     <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Stores */}
       <div className="bg-white p-4 rounded-xl shadow">
-        <h3 className="font-semibold mb-4">Routing Stores</h3>
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left">
-              <th>#</th>
-              <th>Store name</th>
-              <th>Card</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {stores.map((s, i) => (
-              <tr key={i} className="border-t">
-                <td>{i + 1}</td>
-                <td>{s.name}</td>
-                <td>{s.card}</td>
-                <td>
-                  <button className="text-green-600">✔</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold">Routing Stores</h3>
+        </div>
+
+        {loading.stores ? (
+          <div className="h-48 rounded-xl bg-gray-100 animate-pulse" />
+        ) : error.stores ? (
+          <div className="text-red-600">{error.stores}</div>
+        ) : (
+          <Table columns={storeColumns} data={storesData} />
+        )}
       </div>
 
+      {/* Doctors */}
       <div className="bg-white p-4 rounded-xl shadow">
-        <h3 className="font-semibold mb-4">Routing Doctors</h3>
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left">
-              <th>#</th>
-              <th>Doctor name</th>
-              <th>Card</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {doctors.map((d, i) => (
-              <tr key={i} className="border-t">
-                <td>{i + 1}</td>
-                <td>{d.name}</td>
-                <td>{d.card}</td>
-                <td>
-                  <button className="text-green-600">✔</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold">Routing Doctors</h3>
+        </div>
+
+        {loading.doctors ? (
+          <div className="h-48 rounded-xl bg-gray-100 animate-pulse" />
+        ) : error.doctors ? (
+          <div className="text-red-600">{error.doctors}</div>
+        ) : (
+          <Table columns={doctorColumns} data={doctorsData} />
+        )}
       </div>
     </section>
   );

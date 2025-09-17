@@ -5,7 +5,14 @@ import DocReporting from "./components/DocReporting";
 import GeneralHealth from "./components/GeneralHealth";
 import Distribution from "./components/Distribution";
 import Routing from "./components/Routing";
-import { getDocReporting } from "../../services/dashboard/dashboard";
+import {
+  getDocReporting,
+  getGeneralHealth,
+  getDistributionPharmacy,
+  getDistributionDoctor,
+  getDocRouting,
+  getStoreRouting
+} from "../../services/dashboard/dashboard";
 
 const TODAY = format(new Date(), "yyyy-MM-dd");
 
@@ -35,35 +42,126 @@ function writeFiltersToURL({ startDate, endDate, patientTypes }) {
 export default function Dashboard() {
   const [filters, setFilters] = useState(() => readFiltersFromURL());
 
+  // DocReporting
   const [report, setReport] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [reportLoading, setReportLoading] = useState(false);
+  const [reportError, setReportError] = useState("");
 
-  // كل ما الفلاتر تتغير، اكتبها في الـ URL
+  // GeneralHealth
+  const [generalHealth, setGeneralHealth] = useState(null);
+  const [ghLoading, setGhLoading] = useState(false);
+  const [ghError, setGhError] = useState("");
+
+  // Distribution - Doctors
+  const [distDoctors, setDistDoctors] = useState(null);
+  const [distDocLoading, setDistDocLoading] = useState(false);
+  const [distDocError, setDistDocError] = useState("");
+
+  // Distribution - Pharmacy
+  const [distPharmacy, setDistPharmacy] = useState(null); 
+  const [distPhLoading, setDistPhLoading] = useState(false);
+  const [distPhError, setDistPhError] = useState("");
+
+    // Routing – Stores
+  const [storesRouting, setStoresRouting] = useState([]);
+  const [storesLoading, setStoresLoading] = useState(false);
+  const [storesError, setStoresError] = useState("");
+
+  // Routing – Doctors
+  const [docsRouting, setDocsRouting] = useState([]);
+  const [docsLoading, setDocsLoading] = useState(false);
+  const [docsError, setDocsError] = useState("");
+
   useEffect(() => {
     writeFiltersToURL(filters);
   }, [filters]);
 
-  const fetchData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError("");
-      const data = await getDocReporting(
-        filters.startDate,
-        filters.endDate,
-        filters.patientTypes
-      );
-      setReport(data);
-    } catch (e) {
-      setError(e?.message || "Failed to fetch stats");
-    } finally {
-      setLoading(false);
+  const fetchAll = useCallback(async () => {
+    setReportLoading(true);
+    setGhLoading(true);
+    setDistDocLoading(true);
+    setDistPhLoading(true);
+        setStoresLoading(true);
+    setDocsLoading(true);
+
+    setReportError("");
+    setGhError("");
+    setDistDocError("");
+    setDistPhError("");
+    setStoresError("");
+    setDocsError("");
+
+    const tasks = [
+      getDocReporting(filters.startDate, filters.endDate, filters.patientTypes),
+      getGeneralHealth(filters.startDate, filters.endDate, filters.patientTypes),
+      getDistributionDoctor(filters.startDate, filters.endDate, filters.patientTypes),
+      getDistributionPharmacy(filters.startDate, filters.endDate, filters.patientTypes),
+       getStoreRouting(),
+      getDocRouting(),
+    ];
+
+      const [docRepRes, ghRes, distDocRes, distPhRes, storeRouteRes, docRouteRes] =
+      await Promise.allSettled(tasks);
+
+    // DocReporting
+    if (docRepRes.status === "fulfilled") {
+      setReport(docRepRes.value);
+    } else {
+      setReportError(docRepRes.reason?.message || "Failed to fetch stats");
     }
+    setReportLoading(false);
+
+    // GeneralHealth
+    if (ghRes.status === "fulfilled") {
+      setGeneralHealth(ghRes.value);
+    } else {
+      setGhError(ghRes.reason?.message || "Failed to fetch general health");
+    }
+    setGhLoading(false);
+
+
+    if (distDocRes.status === "fulfilled") {
+   
+      const val = distDocRes.value;
+      const arr = Array.isArray(val) ? val : val?.data;
+      setDistDoctors(Array.isArray(arr) ? arr : []);
+    } else {
+      setDistDocError(distDocRes.reason?.message || "Failed to fetch doctors distribution");
+    }
+    setDistDocLoading(false);
+
+ 
+    if (distPhRes.status === "fulfilled") {
+    
+      const val = distPhRes.value;
+      const obj = val?.tele_med || val?.tele_priv ? val : val?.data;
+      setDistPharmacy(obj || { tele_med: [], tele_priv: [] });
+    } else {
+      setDistPhError(distPhRes.reason?.message || "Failed to fetch pharmacy distribution");
+    }
+    setDistPhLoading(false);
+
+        if (storeRouteRes.status === "fulfilled") {
+     
+      setStoresRouting(Array.isArray(storeRouteRes.value) ? storeRouteRes.value : storeRouteRes.value?.data ?? []);
+    } else {
+      setStoresError(storeRouteRes.reason?.message || "Failed to fetch store routing");
+    }
+    setStoresLoading(false);
+
+   
+    if (docRouteRes.status === "fulfilled") {
+      setDocsRouting(Array.isArray(docRouteRes.value) ? docRouteRes.value : docRouteRes.value?.data ?? []);
+    } else {
+      setDocsError(docRouteRes.reason?.message || "Failed to fetch doctor routing");
+    }
+    setDocsLoading(false);
   }, [filters]);
+  
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    fetchAll();
+  }, [fetchAll]);
 
   const handleDateChange = (start, end) => {
     setFilters((prev) => ({
@@ -87,11 +185,24 @@ export default function Dashboard() {
         selectedType={filters.patientTypes}
       />
 
-      <DocReporting data={report} loading={loading} error={error} />
+      <DocReporting data={report} loading={reportLoading} error={reportError} />
 
-      <GeneralHealth />
-      <Distribution />
-      <Routing />
+      <GeneralHealth data={generalHealth} loading={ghLoading} error={ghError} />
+
+      <Distribution
+        doctorsData={distDoctors}
+        pharmacyData={distPharmacy}
+        loading={{ doctors: distDocLoading, pharmacy: distPhLoading }}
+        error={{ doctors: distDocError, pharmacy: distPhError }}
+      />
+
+        <Routing
+        stores={storesRouting}
+        doctors={docsRouting}
+        loading={{ stores: storesLoading, doctors: docsLoading }}
+        error={{ stores: storesError, doctors: docsError }}
+        patientType={filters.patientTypes} 
+      />
     </div>
   );
 }

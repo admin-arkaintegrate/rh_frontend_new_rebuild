@@ -1,79 +1,103 @@
 import React from "react";
 import exportt from "/src/assets/icons/export.svg";
 
-export default function GeneralHealth() {
+export default function GeneralHealth({ data, loading, error }) {
+
+  const vals = {
+    calls_received: data?.calls_received ?? 0,
+    routed_to_doctor: data?.routed_to_doctor ?? 0,
+    insurance_verified: data?.insurance_verified ?? 0,
+    consulted: data?.consulted ?? 0,
+    erx_denied: data?.erx_denied ?? 0,
+    erx_sent: data?.erx_sent ?? 0,
+  };
+
+
   const items = [
     {
       title: "Call received",
-      value: 450,
-      percentage: 2.5,
+      value: vals.calls_received,
       color: "bg-[#DBEAFE]",
       img: "/src/assets/icons/general-health1.svg",
+      percentage: undefined, 
     },
     {
       title: "Routed to doctor",
-      value: 5,
-      percentage: 2.5,
+      value: vals.routed_to_doctor,
       color: "bg-[#D3ECF8]",
       img: "/src/assets/icons/general-health2.svg",
+      percentage: undefined,
     },
     {
       title: "Insurance Verified",
-      value: 450,
-      percentage: 2.5,
+      value: vals.insurance_verified,
       color: "bg-[#F3E8FF]",
       img: "/src/assets/icons/general-health3.svg",
+      percentage: undefined,
     },
     {
       title: "Consulted",
-      value: 5,
-      percentage: 2.5,
+      value: vals.consulted,
       color: "bg-[#FEF8DD]",
       img: "/src/assets/icons/general-health4.svg",
+      percentage: undefined,
     },
     {
       title: "ERX denied",
-      value: 450,
-      percentage: 2.5,
+      value: vals.erx_denied,
       color: "bg-[#F9D8D9]",
       img: "/src/assets/icons/general-health5.svg",
+      percentage: undefined,
     },
     {
       title: "ERX sent",
-      value: 450,
-      percentage: 2.5,
+      value: vals.erx_sent,
       color: "bg-[#AEAEAE33]",
       img: "/src/assets/icons/general-health6.svg",
+      percentage: undefined,
     },
   ];
 
   return (
     <section className="p-4 rounded-xl shadow bg-white">
-     <div className="flex items-center justify-between mb-5">
-             <div>
-               <h2 className="text-xl mb-2 font-semibold text-[var(--primaryDark)]">
-                 General Health
-               </h2>
-               <span className="text-[var(--grayColor)]">Summery</span>
-             </div>
-             <button className="text-sm flex items-center border border-[#C3D3E2]  text-[var(--primaryDark)] px-4 py-2 rounded-lg">
-               <img src={exportt} alt="" className="inline h-6 w-6 mr-2" />
-               Export
-             </button>
-           </div>
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-        {items.map((c, i) => (
-          <div
-            key={i}
-            className={`${c.color} p-4 rounded-xl shadow-sm flex flex-col`}
-          >
-            <img src={c.img} alt="" className="h-9 w-9 mb-2" />
-            <span className="text-2xl font-bold">{c.value}</span>
-            <span className="font-medium text-gray-600">{c.title}</span>
-                <span className="text-sm font-medium text-[var(--blue)]">{c.percentage}%</span>
-          </div>
-        ))}
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <h2 className="text-xl mb-2 font-semibold text-[var(--primaryDark)]">
+            General Health
+          </h2>
+          <span className="text-[var(--grayColor)]">Summery</span>
+        </div>
+        <button className="text-sm flex items-center border border-[#C3D3E2] text-[var(--primaryDark)] px-4 py-2 rounded-lg">
+          <img src={exportt} alt="" className="inline h-6 w-6 mr-2" />
+          Export
+        </button>
       </div>
+
+      {loading ? (
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="p-4 rounded-xl bg-gray-100 animate-pulse h-28" />
+          ))}
+        </div>
+      ) : error ? (
+        <div className="text-red-600">{error}</div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+          {items.map((c, i) => (
+            <div key={i} className={`${c.color} p-4 rounded-xl shadow-sm flex flex-col`}>
+              <img src={c.img} alt="" className="h-9 w-9 mb-2" />
+              <span className="text-2xl font-bold">{c.value}</span>
+              <span className="font-medium text-gray-600">{c.title}</span>
+            
+              {typeof c.percentage === "number" && (
+                <span className="text-sm font-medium text-[var(--blue)]">
+                  {c.percentage}%
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
