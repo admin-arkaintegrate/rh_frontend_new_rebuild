@@ -20,7 +20,7 @@ export default function Table({ columns, data }) {
 
   return (
     <div className="overflow-auto rounded-2xl bg-white shadow ring-1 ring-black/5">
-      <table className="min-w-full table-fixed">
+      <table className="min-w-full table-fixed text-center">
         {/* HEADER */}
         <thead className="bg-[#354D92]">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -34,7 +34,7 @@ export default function Table({ columns, data }) {
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
                   }}
-                  className="py-4 !px-3 text-center text-[12px] font-semibold text-white
+                  className="py-6 !px-3 text-center text-[12px] font-semibold text-white
                              first:rounded-l-xl last:rounded-r-xl"
                 >
                   {header.isPlaceholder
@@ -50,56 +50,73 @@ export default function Table({ columns, data }) {
         </thead>
 
         {/* BODY */}
-        <tbody>
+        <tbody className="">
           {table.getRowModel().rows.length > 0 ? (
-            table.getRowModel().rows.map((row) => (
-              <tr
-                key={row.id}
-                className="bg-[#F5F7FA] border-b border-[#E7F1FF]"
-              >
-                {row.getVisibleCells().map((cell) => {
-                  const value = flexRender(
-                    cell.column.columnDef.cell,
-                    cell.getContext()
-                  );
-                  const { display, tooltip } = formatCellContent(value, 12);
-                  const finalDisplay = display;
+            <tr>
+              <td colSpan={columns.length} className="p-0">
+                {/* Wrap the rows in a scrollable container */}
+                <div
+                  className={`${
+                    table.getRowModel().rows.length > 5
+                      ? "max-h-72 overflow-y-auto "
+                      : ""
+                  }`}
+                >
+                  <table className="min-w-full table-fixed border-separate border-spacing-y-2">
+                    <tbody>
+                      {table.getRowModel().rows.map((row) => (
+                        <tr
+                          key={row.id}
+                          className="bg-[#F5F7FA] border-b border-[#E7F1FF]"
+                        >
+                          {row.getVisibleCells().map((cell) => {
+                            const value = flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            );
+                            const { display, tooltip } = formatCellContent(
+                              value,
+                              12
+                            );
+                            const finalDisplay = display;
 
-                  return (
-                    <td
-                      key={cell.id}
-                      style={{
-                        width: cell.column.getSize(),
-                        maxWidth: cell.column.getSize(),
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                      className="bg-[#F5F7FA] !px-3 h-[56px] text-center
-                                 text-[12px] font-semibold text-[#454545]
-                                 border-x border-[#E7F1FF] first:border-l-0 last:border-r-0"
-                    >
-                      {tooltip ? (
-                        <Tooltip text={tooltip}>{finalDisplay}</Tooltip>
-                      ) : (
-                        finalDisplay
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))
+                            return (
+                              <td
+                                key={cell.id}
+                                style={{
+                                  width: cell.column.getSize(),
+                                  maxWidth: cell.column.getSize(),
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                }}
+                                className="bg-[#F5F7FA] !px-3 h-[56px] text-center
+                                   text-[12px] font-semibold text-[#454545]
+                                  "
+                              >
+                                {tooltip ? (
+                                  <Tooltip text={tooltip}>
+                                    {finalDisplay}
+                                  </Tooltip>
+                                ) : (
+                                  finalDisplay
+                                )}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </td>
+            </tr>
           ) : (
             <tr>
               <td
                 colSpan={columns.length}
                 className="p-6 text-center text-gray-500"
               >
-                {/* <img
-                  src={noData}
-                  alt="No Data"
-                  className="mx-auto w-full h-96 object-cover"
-                  loading="lazy"
-                /> */}
+                No Data
               </td>
             </tr>
           )}

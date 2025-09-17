@@ -81,3 +81,31 @@ export async function getDocRouting() {
         throw new Error("Failed to fetch stats" + error);
     }
 }
+
+//// Edit Store Routing /////
+export async function EditStoreRouting(pharmacyId, { med_cap, priv_cap }) {
+    try {
+        const payload = {};
+        if (med_cap !== undefined) payload.med_cap = Number(med_cap);
+        if (priv_cap !== undefined) payload.priv_cap = Number(priv_cap);
+
+        const response = await api.patch(`dashboard/pharmacy/${pharmacyId}/caps`, payload);
+        return response.data;
+    } catch (error) {
+        throw new Error(`Failed to update caps for pharmacy ${pharmacyId}: ` + error);
+    }
+}
+
+//// Edit Doctor Routing /////
+export async function EditDoctorRouting(doctorId, { doc_cap }) {
+  try {
+    const payload = {};
+    if (doc_cap !== undefined) payload.doc_cap = Number(doc_cap);
+
+    const response = await api.patch(`dashboard/doctor/${doctorId}/cap`, payload);
+    return response.data;
+  } catch (error) {
+    throw new Error(`Failed to update caps for doctor ${doctorId}: ` + error);
+  }
+}
+
