@@ -2,7 +2,10 @@ import React, { useMemo, useState, useEffect } from "react";
 import Table from "../../../components/shared/Table";
 import editIcon from "/src/assets/icons/edit.svg";
 import doneIcon from "/src/assets/icons/done.svg";
-import { EditStoreRouting, EditDoctorRouting } from "../../../services/dashboard/dashboard";
+import {
+  EditStoreRouting,
+  EditDoctorRouting,
+} from "../../../services/dashboard/dashboard";
 
 export default function Routing({
   stores = [],
@@ -16,7 +19,10 @@ export default function Routing({
 
   const [editingStoreId, setEditingStoreId] = useState(null);
   const [editingStoreField, setEditingStoreField] = useState(null); // "tele_med" | "tele_priv"
-  const [draftStoreCaps, setDraftStoreCaps] = useState({ tele_med: "0", tele_priv: "0" });
+  const [draftStoreCaps, setDraftStoreCaps] = useState({
+    tele_med: "0",
+    tele_priv: "0",
+  });
   const [savingStore, setSavingStore] = useState(false);
 
   const startEditStore = (row, field = "tele_med") => {
@@ -28,6 +34,11 @@ export default function Routing({
     });
   };
 
+  const clamp10 = (s) =>
+    String(s ?? "")
+      .replace(/\D/g, "")
+      .slice(0, 10);
+
   const applySaveStore = async (row) => {
     try {
       setSavingStore(true);
@@ -36,7 +47,6 @@ export default function Routing({
 
       await EditStoreRouting(row.id, { med_cap: medVal, priv_cap: privVal });
 
-      
       setStoresLocal((prev) =>
         prev.map((s) =>
           s.id === row.id ? { ...s, med_cap: medVal, priv_cap: privVal } : s
@@ -47,7 +57,6 @@ export default function Routing({
       setEditingStoreField(null);
     } catch (e) {
       console.error(e);
-      
     } finally {
       setSavingStore(false);
     }
@@ -66,7 +75,12 @@ export default function Routing({
 
   const storeColumns = useMemo(
     () => [
-      { header: "#", accessorKey: "id", size: 60, cell: (info) => info.row.index + 1 },
+      {
+        header: "#",
+        accessorKey: "id",
+        size: 60,
+        cell: (info) => info.row.index + 1,
+      },
       { header: "Store name", accessorKey: "name", size: 260 },
       {
         header: "Tele med",
@@ -78,14 +92,17 @@ export default function Routing({
           return isEditing ? (
             <input
               key={`med-${row.id}`}
-              type="number"
-              min={0}
-              step="1"
+              type="text"
               inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={10}
               autoFocus={editingStoreField === "tele_med"}
               value={draftStoreCaps.tele_med}
               onChange={(e) =>
-                setDraftStoreCaps((d) => ({ ...d, tele_med: e.target.value }))
+                setDraftStoreCaps((d) => ({
+                  ...d,
+                  tele_med: clamp10(e.target.value),
+                }))
               }
               onFocus={() => setEditingStoreField("tele_med")}
               onKeyDown={(e) => {
@@ -112,14 +129,17 @@ export default function Routing({
           return isEditing ? (
             <input
               key={`priv-${row.id}`}
-              type="number"
-              min={0}
-              step="1"
+              type="text"
               inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={10}
               autoFocus={editingStoreField === "tele_priv"}
               value={draftStoreCaps.tele_priv}
               onChange={(e) =>
-                setDraftStoreCaps((d) => ({ ...d, tele_priv: e.target.value }))
+                setDraftStoreCaps((d) => ({
+                  ...d,
+                  tele_priv: clamp10(e.target.value),
+                }))
               }
               onFocus={() => setEditingStoreField("tele_priv")}
               onKeyDown={(e) => {
@@ -156,7 +176,6 @@ export default function Routing({
                   >
                     <img src={doneIcon} className="w-8 h-8 mx-auto" />
                   </button>
-         
                 </>
               ) : (
                 <button
@@ -229,7 +248,12 @@ export default function Routing({
 
   const doctorColumns = useMemo(
     () => [
-      { header: "#", accessorKey: "id", size: 60, cell: (info) => info.row.index + 1 },
+      {
+        header: "#",
+        accessorKey: "id",
+        size: 60,
+        cell: (info) => info.row.index + 1,
+      },
       { header: "Doctor name", accessorKey: "name", size: 260 },
       {
         header: "Count",
@@ -241,13 +265,13 @@ export default function Routing({
           return isEditing ? (
             <input
               key={`doc-${row.id}`}
-              type="number"
-              min={0}
-              step="1"
+              type="text"
               inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={10}
               autoFocus
               value={draftDoctorCount}
-              onChange={(e) => setDraftDoctorCount(e.target.value)}
+              onChange={(e) => setDraftDoctorCount(clamp10(e.target.value))}
               onKeyDown={(e) => {
                 if (e.key === "Enter") applySaveDoctor(row);
                 if (e.key === "Escape") setEditingDoctorId(null);
@@ -269,12 +293,17 @@ export default function Routing({
           return (
             <button
               type="button"
-              onClick={() => (isEditing ? applySaveDoctor(row) : startEditDoctor(row))}
+              onClick={() =>
+                isEditing ? applySaveDoctor(row) : startEditDoctor(row)
+              }
               className="mx-auto disabled:opacity-50"
               disabled={savingDoctor}
               title={isEditing ? "Save" : "Edit"}
             >
-              <img src={isEditing ? doneIcon : editIcon} className="w-8 h-8 mx-auto" />
+              <img
+                src={isEditing ? doneIcon : editIcon}
+                className="w-8 h-8 mx-auto"
+              />
             </button>
           );
         },
@@ -288,8 +317,10 @@ export default function Routing({
     <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Stores */}
       <div className="bg-white p-4 rounded-xl shadow">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold">Routing Stores</h3>
+        <div className="flex items-center justify-between my-2">
+          <h2 className="text-xl mb-2 font-semibold text-[var(--primaryDark)]  mx-2">
+            Routing <span className="text-[#0D6EFD] ml-1">Stores </span>
+          </h2>
         </div>
         {loading.stores ? (
           <div className="h-48 rounded-xl bg-gray-100 animate-pulse" />
@@ -301,8 +332,10 @@ export default function Routing({
             data={storesData}
             onCellDoubleClick={(cell) => {
               const row = cell.row.original;
-              if (cell.column.id === "tele_med") startEditStore(row, "tele_med");
-              if (cell.column.id === "tele_priv") startEditStore(row, "tele_priv");
+              if (cell.column.id === "tele_med")
+                startEditStore(row, "tele_med");
+              if (cell.column.id === "tele_priv")
+                startEditStore(row, "tele_priv");
             }}
           />
         )}
@@ -310,8 +343,10 @@ export default function Routing({
 
       {/* Doctors */}
       <div className="bg-white p-4 rounded-xl shadow">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold">Routing Doctors</h3>
+        <div className="flex items-center justify-between my-2">
+          <h2 className="text-xl mb-2 font-semibold text-[var(--primaryDark)]  mx-2">
+            Routing <span className="text-[#0D6EFD] ml-1">Doctors </span>
+          </h2>
         </div>
         {loading.doctors ? (
           <div className="h-48 rounded-xl bg-gray-100 animate-pulse" />

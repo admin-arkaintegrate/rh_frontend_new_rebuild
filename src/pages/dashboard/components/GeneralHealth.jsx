@@ -1,5 +1,11 @@
 import React from "react";
 import exportt from "/src/assets/icons/export.svg";
+import generalHealth1 from "/src/assets/icons/general-health1.svg";
+import generalHealth2 from "/src/assets/icons/general-health2.svg";
+import generalHealth3 from "/src/assets/icons/general-health3.svg";
+import generalHealth4 from "/src/assets/icons/general-health4.svg";
+import generalHealth5 from "/src/assets/icons/general-health5.svg";
+import generalHealth6 from "/src/assets/icons/general-health6.svg";
 
 export default function GeneralHealth({ data, loading, error }) {
 
@@ -18,42 +24,42 @@ export default function GeneralHealth({ data, loading, error }) {
       title: "Call received",
       value: vals.calls_received,
       color: "bg-[#DBEAFE]",
-      img: "/src/assets/icons/general-health1.svg",
-      percentage: undefined, 
+      img: generalHealth1,
+      percentage: undefined,
     },
     {
       title: "Routed to doctor",
       value: vals.routed_to_doctor,
       color: "bg-[#D3ECF8]",
-      img: "/src/assets/icons/general-health2.svg",
+      img: generalHealth2,
       percentage: undefined,
     },
     {
       title: "Insurance Verified",
       value: vals.insurance_verified,
       color: "bg-[#F3E8FF]",
-      img: "/src/assets/icons/general-health3.svg",
+      img: generalHealth3,
       percentage: undefined,
     },
     {
       title: "Consulted",
       value: vals.consulted,
       color: "bg-[#FEF8DD]",
-      img: "/src/assets/icons/general-health4.svg",
+      img: generalHealth4,
       percentage: undefined,
     },
     {
       title: "ERX denied",
       value: vals.erx_denied,
       color: "bg-[#F9D8D9]",
-      img: "/src/assets/icons/general-health5.svg",
+      img: generalHealth5,
       percentage: undefined,
     },
     {
       title: "ERX sent",
       value: vals.erx_sent,
       color: "bg-[#AEAEAE33]",
-      img: "/src/assets/icons/general-health6.svg",
+      img: generalHealth6,
       percentage: undefined,
     },
   ];

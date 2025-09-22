@@ -1,6 +1,9 @@
 // src/pages/dashboard/components/DocReporting.jsx
 import React from "react";
 import exportt from "/src/assets/icons/export.svg";
+import docReporting1 from "/src/assets/icons/doc-reporting1.svg";
+import docReporting2 from "/src/assets/icons/doc-reporting2.svg";
+import docReporting3 from "/src/assets/icons/doc-reporting3.svg";
 
 export default function DocReporting({ data, loading, error }) {
   const totals = {
@@ -24,21 +27,21 @@ export default function DocReporting({ data, loading, error }) {
       value: totals.sentErx.count,
       percentage: totals.sentErx.percentage,
       color: "bg-[#DBEAFE]",
-      img: "/src/assets/icons/doc-reporting1.svg",
+      img: docReporting1,
     },
     {
       title: "Total Consulted pending",
       value: totals.consultedPending.count,
       percentage: totals.consultedPending.percentage,
       color: "bg-[#BF83FF33]",
-      img: "/src/assets/icons/doc-reporting2.svg",
+      img: docReporting2,
     },
     {
       title: "Total other Status",
       value: totals.otherStatus.count,
       percentage: totals.otherStatus.percentage,
       color: "bg-[#FEF3C799]",
-      img: "/src/assets/icons/doc-reporting3.svg",
+      img: docReporting3,
     },
   ];
 
@@ -60,7 +63,10 @@ export default function DocReporting({ data, loading, error }) {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="p-4 rounded-xl bg-gray-100 animate-pulse h-28" />
+            <div
+              key={i}
+              className="p-4 rounded-xl bg-gray-100 animate-pulse h-28"
+            />
           ))}
         </div>
       ) : error ? (
@@ -68,7 +74,10 @@ export default function DocReporting({ data, loading, error }) {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {cards.map((c, i) => (
-            <div key={i} className={`${c.color} p-4 rounded-xl shadow-sm flex flex-col`}>
+            <div
+              key={i}
+              className={`${c.color} p-4 rounded-xl shadow-sm flex flex-col`}
+            >
               <img src={c.img} alt="" className="h-9 w-9 mb-2" />
               <span className="text-2xl font-bold">{c.value}</span>
               <span className="font-medium text-gray-600">{c.title}</span>

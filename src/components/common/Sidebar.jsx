@@ -1,34 +1,30 @@
+
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import logo from "/src/assets/imgs/logo.png";
+import logo from "/src/assets/icons/logo.svg";
+import dashboardIcon from "/src/assets/icons/dashboard.svg";
+import teleMedIcon from "/src/assets/icons/tele-med.svg";
+import telePrivIcon from "/src/assets/icons/tele-priv.svg";
+import doctorsIcon from "/src/assets/icons/doctors.svg";
+import settingsIcon from "/src/assets/icons/settings.svg";
+import signOutIcon from "/src/assets/icons/sign-out.svg";
 
 const navItems = [
-  { to: "/", icon: "/src/assets/icons/dashboard.svg", label: "Dashboard" },
-  {
-    to: "/tele-med",
-    icon: "/src/assets/icons/tele-med.svg",
-    label: "Tele Med",
-  },
-  {
-    to: "/tele-priv",
-    icon: "/src/assets/icons/tele-priv.svg",
-    label: "Tele Priv",
-  },
-  { to: "/doctors", icon: "/src/assets/icons/doctors.svg", label: "Doctors" },
-  {
-    to: "/settings",
-    icon: "/src/assets/icons/settings.svg",
-    label: "Settings",
-  },
-  { to: "/logout", icon: "/src/assets/icons/sign-out.svg", label: "Logout" },
+  { to: "/", icon: dashboardIcon, label: "Dashboard" },
+  { to: "/tele-med", icon: teleMedIcon, label: "Tele Med" },
+  { to: "/tele-priv", icon: telePrivIcon, label: "Tele Priv" },
+  { to: "/doctors", icon: doctorsIcon, label: "Doctors" },
+  { to: "/settings", icon: settingsIcon, label: "Settings" },
+  { to: "/logout", icon: signOutIcon, label: "Logout" },
 ];
 
-export default function SideBar() {
+
+export default function Sidebar() {
   const navigate = useNavigate();
 
   return (
     <aside
-      className="fixed left-0 top-0 h-screen w-28 flex flex-col items-center justify-between py-5"
+      className="fixed left-0 top-[62%] translate-y-[-50%] h-screen w-28 flex flex-col items-center justify-between py-5"
       style={{ backgroundColor: "#354D92" }}
     >
       {/* Logo */}
@@ -38,11 +34,11 @@ export default function SideBar() {
         aria-label="Go to dashboard"
         title="Dashboard"
       >
-        <img src={logo} alt="Logo" className="h-24 w-24 object-contain" />
+        <img src={logo} alt="Logo" className="h-[6rem] w-[6rem] object-contain" />
       </button>
 
       {/* Main nav */}
-      <nav className="flex-1 flex flex-col items-center gap-4 pt-6">
+      <nav className="flex-1 flex flex-col items-center gap-5 pt-6">
         {navItems.map((item) => (
           <NavLink
             key={item.to}
@@ -58,7 +54,7 @@ export default function SideBar() {
             title={item.label}
             aria-label={item.label}
           >
-            <img src={item.icon} alt="" className="h-6 w-6" />
+            <img src={item.icon} alt="" className="h-8 w-8" />
           </NavLink>
         ))}
       </nav>

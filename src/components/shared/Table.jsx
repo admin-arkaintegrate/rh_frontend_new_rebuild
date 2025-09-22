@@ -8,7 +8,7 @@ import {
 import { formatCellContent } from "../../helpers/formatCellContent";
 import Tooltip from "./Tooltip";
 
-export default function Table({ columns, data }) {
+export default function Table({ columns, data, onCellDoubleClick }) {
   const memoizedColumns = useMemo(() => columns, [columns]);
   const memoizedData = useMemo(() => data, [data]);
 
@@ -19,8 +19,8 @@ export default function Table({ columns, data }) {
   });
 
   return (
-    <div className="overflow-auto rounded-2xl bg-white shadow ring-1 ring-black/5">
-      <table className="min-w-full table-fixed text-center">
+    <div className="overflow-x-auto scrollbar-hide rounded-2xl bg-white ">
+      <table className="min-w-[720px] table-fixed text-center">
         {/* HEADER */}
         <thead className="bg-[#354D92]">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -54,15 +54,14 @@ export default function Table({ columns, data }) {
           {table.getRowModel().rows.length > 0 ? (
             <tr>
               <td colSpan={columns.length} className="p-0">
-                {/* Wrap the rows in a scrollable container */}
                 <div
                   className={`${
                     table.getRowModel().rows.length > 5
-                      ? "max-h-72 overflow-y-auto "
+                      ? "max-h-72 overflow-y-auto scrollbar-hide "
                       : ""
                   }`}
                 >
-                  <table className="min-w-full table-fixed border-separate border-spacing-y-2">
+                  <table className="min-w-[720px] table-fixed border-separate border-spacing-y-2">
                     <tbody>
                       {table.getRowModel().rows.map((row) => (
                         <tr
@@ -78,7 +77,11 @@ export default function Table({ columns, data }) {
                               value,
                               12
                             );
-                            const finalDisplay = display;
+                            const finalDisplay = tooltip ? (
+                              <Tooltip text={tooltip}>{display}</Tooltip>
+                            ) : (
+                              display
+                            );
 
                             return (
                               <td
@@ -90,16 +93,10 @@ export default function Table({ columns, data }) {
                                   whiteSpace: "nowrap",
                                 }}
                                 className="bg-[#F5F7FA] !px-3 h-[56px] text-center
-                                   text-[12px] font-semibold text-[#454545]
-                                  "
+                                   text-[12px] font-semibold text-[#454545]"
+                                onDoubleClick={() => onCellDoubleClick?.(cell)}
                               >
-                                {tooltip ? (
-                                  <Tooltip text={tooltip}>
-                                    {finalDisplay}
-                                  </Tooltip>
-                                ) : (
-                                  finalDisplay
-                                )}
+                                {finalDisplay}
                               </td>
                             );
                           })}

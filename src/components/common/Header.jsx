@@ -21,13 +21,12 @@ import "react-date-range/dist/theme/default.css";
 export default function Header({
   onDateChange = () => {},
   onTypeChange = () => {},
-  selectedStartDate,   // ex: "2025-09-16"
-  selectedEndDate,     // ex: "2025-09-16"
+  selectedStartDate, // ex: "2025-09-16"
+  selectedEndDate, // ex: "2025-09-16"
   selectedType = "all", // "all" | "tele_med" | "tele_priv"
 }) {
   const { user: authUser } = useAuth();
 
-  // ---------- Config ----------
   const types = useMemo(
     () => [
       { name: "All", id: 1, key: "all" },
@@ -37,7 +36,6 @@ export default function Header({
     []
   );
 
-  // ---------- Date state (controlled by props with safe fallback = today) ----------
   const today = new Date();
 
   const initialStart = useMemo(() => {
@@ -60,12 +58,12 @@ export default function Header({
     { startDate: initialStart, endDate: initialEnd, key: "selection" },
   ]);
 
-  // Sync picker when URL props change (e.g., on refresh/back/forward)
   useEffect(() => {
-    setRange([{ startDate: initialStart, endDate: initialEnd, key: "selection" }]);
+    setRange([
+      { startDate: initialStart, endDate: initialEnd, key: "selection" },
+    ]);
   }, [initialStart, initialEnd]);
 
-  // ---------- Type state (controlled by props with fallback = All) ----------
   const [type, setType] = useState(
     () => types.find((t) => t.key === selectedType) || types[0]
   );
@@ -75,13 +73,10 @@ export default function Header({
     setType(found);
   }, [selectedType, types]);
 
-  // ---------- Date popover handling ----------
   const calendarRef = useRef(null);
   const calendarToggleRef = useRef(null);
   const [open, setOpen] = useState(false);
-  const [isSelecting, setIsSelecting] = useState(false);
 
-  // Close picker on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -97,17 +92,29 @@ export default function Header({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [open]);
 
-  // ---------- UI helpers ----------
   const formatLabel = () => {
     const s = range[0]?.startDate;
     const e = range[0]?.endDate;
     if (!s || !e) return "Select range";
-    // لو اليومين نفس اليوم، اكتب Today
+
     if (isSameDay(s, today) && isSameDay(e, today)) return "Today";
     return `${format(s, "dd LLL")} - ${format(e, "dd LLL")}`;
   };
 
-  // ---------- Render ----------
+  const handleDateSelect = (item) => {
+    const { startDate, endDate } = item.selection;
+    setRange([item.selection]);
+
+    // Check if both start and end dates are selected
+    if (startDate && endDate) {
+      // Check if start and end dates are different
+      if (!isSameDay(startDate, endDate)) {
+        setOpen(false); // Close the calendar only when a range is selected
+      }
+      onDateChange(startDate, endDate);
+    }
+  };
+
   return (
     <header className="w-full">
       <div className="rounded-2xl bg-white shadow p-4 md:p-6">
@@ -124,7 +131,11 @@ export default function Header({
                 onClick={() => setOpen((prev) => !prev)}
                 className="border-right-date flex items-center max-md:h-10 max-md:w-auto justify-between pe-2 py-1 md:px-3 md:py-2 rounded-3xl font-medium cursor-pointer bg-[#F9FAFB]"
               >
-                <img src={calendar} className="w-[24px] h-[24px] ms-2" alt="calendar" />
+                <img
+                  src={calendar}
+                  className="w-[24px] h-[24px] ms-2"
+                  alt="calendar"
+                />
                 <div className="block px-2 text-sm">{formatLabel()}</div>
                 <ChevronDownIcon className="size-4" />
               </div>
@@ -143,19 +154,7 @@ export default function Header({
                   >
                     <DateRange
                       editableDateInputs
-                      onChange={(item) => {
-                        const { startDate, endDate } = item.selection;
-                        setRange([item.selection]);
-                        if (isSelecting) {
-                          setIsSelecting(false);
-                          return;
-                        }
-                        if (startDate && endDate) {
-                          setOpen(false);
-                          onDateChange(startDate, endDate); // يحدّث الـ URL في Dashboard
-                          setIsSelecting(true);
-                        }
-                      }}
+                      onChange={handleDateSelect} // Use the new handler
                       moveRangeOnFirstSelection={false}
                       ranges={range}
                       rangeColors={["#2563eb"]}
@@ -172,7 +171,7 @@ export default function Header({
                 </>
               )}
             </div>
-
+              <div className="h-[35px] w-[1px] bg-[#DDDDDD]"></div>
             {/* Type dropdown */}
             <Menu as="div" className="relative">
               <MenuButton
@@ -211,7 +210,7 @@ export default function Header({
                           <button
                             onClick={() => {
                               setType(opt);
-                              onTypeChange(opt.key); // يكتب في URL من Dashboard
+                              onTypeChange(opt.key);
                             }}
                             className={`flex w-full items-center justify-between gap-2 px-3 py-2 text-sm ${
                               active ? "bg-slate-50" : ""
@@ -223,7 +222,10 @@ export default function Header({
                           >
                             <span>{opt.name}</span>
                             {type.key === opt.key && (
-                              <CheckIcon className="h-4 w-4" aria-hidden="true" />
+                              <CheckIcon
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                              />
                             )}
                           </button>
                         )}
@@ -236,21 +238,23 @@ export default function Header({
           </div>
 
           {/* Profile */}
-          <button className="flex items-center gap-3 rounded-2xl bg-white px-3 py-2 text-left shadow-sm hover:shadow">
+          <button className="flex items-center gap-3  bg-white px-3 py-2 text-left ">
             <img
               src={profileIcon}
               alt="profile"
-              className="h-10 w-10 rounded-full object-cover"
+              className="h-12 w-12 rounded-[16px] object-cover"
             />
             <div className="leading-tight">
-              <p className="text-sm font-semibold text-slate-800">
-                {authUser?.first_name} {authUser?.last_name}
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-semibold text-slate-800">
+                  {authUser?.first_name} {authUser?.last_name}
+                </p>
+                <ChevronDownIcon className="h-4 w-5 font-bold text-black" />
+              </div>
               <p className="text-xs text-slate-500">
                 {type.name === "All" ? "Admin" : type.name}
               </p>
             </div>
-            <ChevronDownIcon className="h-4 w-4 text-slate-600" />
           </button>
         </div>
       </div>
