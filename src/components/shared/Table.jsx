@@ -69,18 +69,20 @@ export default function Table({ columns, data, onCellDoubleClick }) {
                           className="bg-[#F5F7FA] border-b border-[#E7F1FF]"
                         >
                           {row.getVisibleCells().map((cell) => {
+                            const rawValue = cell.getValue();
+
                             const value = flexRender(
                               cell.column.columnDef.cell,
                               cell.getContext()
                             );
                             const { display, tooltip } = formatCellContent(
-                              value,
+                              rawValue,
                               12
                             );
                             const finalDisplay = tooltip ? (
                               <Tooltip text={tooltip}>{display}</Tooltip>
                             ) : (
-                              display
+                              value
                             );
 
                             return (
