@@ -176,7 +176,8 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="p-3 space-y-6">
+    <div className="p-0 md:p-3 space-y-6">
+      <div className="md:block hidden">
       <Header
         onDateChange={handleDateChange}
         onTypeChange={handleTypeChange}
@@ -184,6 +185,7 @@ export default function Dashboard() {
         selectedEndDate={filters.endDate}
         selectedType={filters.patientTypes}
       />
+      </div>
 
       <DocReporting data={report} loading={reportLoading} error={reportError} />
 

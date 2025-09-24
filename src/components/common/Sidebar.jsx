@@ -24,7 +24,7 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="fixed left-0 top-[62%] translate-y-[-50%] h-screen w-28 flex flex-col items-center justify-between py-5"
+      className="fixed  left-0 top-[62%] translate-y-[-50%] h-screen w-28  hidden md:flex flex-col items-center justify-between py-5"
       style={{ backgroundColor: "#354D92" }}
     >
       {/* Logo */}
